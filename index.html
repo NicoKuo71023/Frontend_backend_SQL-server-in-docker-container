@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入 Bootstrap 的 CSS 文件 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
+    <!-- 引入 Vue -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入 Bootstrap 的 JavaScript Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div id="app">
+        <table class="table table-dark table-hover">
+            <thead>
+                <tr>
+                    <th>PassengerId</th>
+                    <th>Survived</th>
+                    <th>Pclass</th>
+                    <th>Name</th>
+                    <th>Sex</th>
+                    <th>Age</th>
+                    <th>Sibsp</th>
+                    <th>Parch</th>
+                    <th>Ticket</th>
+                    <th>Fare</th>
+                    <th>Cabin</th>
+                    <th>Embarked</th>
+                </tr>
+            </thead>
+            <tbody v-for="item in titanic">
+                <tr>
+                    <td>{{ item.PassengerId }}</td>
+                    <td>{{ item.Survived }}</td>
+                    <td>{{ item.Pclass }}</td>
+                    <td>{{ item.Name }}</td>
+                    <td>{{ item.Sex }}</td>
+                    <td>{{ item.Age }}</td>
+                    <td>{{ item.Sibsp }}</td>
+                    <td>{{ item.Parch }}</td>
+                    <td>{{ item.Ticket }}</td>
+                    <td>{{ item.Fare }}</td>
+                    <td>{{ item.Cabin }}</td>
+                    <td>{{ item.Embarked }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+<style>
+    .test1 {
+        border: solid 1px black;
+
+    }
+</style>
+<script>
+    let dataout = { "name": "ChatGPT", "age": 3 };
+
+    const { createApp } = Vue;
+
+    createApp({
+        data() {
+            return {
+                message: 'Hello, Vue 3!',
+                titanic: []  // 使用 Vue 的反應式數據
+            };
+        },
+        methods: {
+            changeMessage() {
+                this.message = 'Message changed!';
+            },
+            getTitanicData() {
+                fetch('http://192.168.31.80:5000/get-data', {  // 確保此 URL 與 Flask 後端一致
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'  // 設定請求的內容類型為 JSON
+                    },
+                    body: JSON.stringify(dataout)  // 將 JavaScript 對象轉換為 JSON 字符串
+                })
+                    .then(response => response.json())  // 解析 JSON 響應
+                    .then(data => {
+                        this.titanic = data.db;  // 更新 Vue 的反應式數據
+                        console.log(this.titanic);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            }
+        },
+        created() {
+            this.getTitanicData();  // 在組件掛載時調用 API
+        }
+    }).mount('#app');
+
+
+</script>
+
+</html>
